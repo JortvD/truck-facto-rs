@@ -2,6 +2,8 @@
 name = "truck-facto-rs"
 version = "0.1.0"
 edition = "2024"
+description = "A high-performance Rust implementation of the Truck-Factor algorithm for Git repositories."
+license = "MIT"
 
 [dependencies]
 levenshtein = "1.0.5"
