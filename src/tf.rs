@@ -5,6 +5,7 @@ const COVERAGE_THRESHOLD: f64 = 0.5;
 
 /// Holds the files associated with an author and whether they are currently
 /// included in the Truck Factor calculation.
+#[derive(Debug)]
 pub struct AuthorFiles {
     pub files: Vec<DoaFile>,
     pub included: bool,
@@ -68,5 +69,5 @@ pub fn calculate_truck_factor(files: &[DoaFile]) -> (u64, HashMap<AuthorInfo, Au
         tf += 1;
     }
 
-    (0, authors_map)
+    (tf, authors_map)
 }

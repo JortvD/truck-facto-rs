@@ -57,7 +57,7 @@ pub struct CommitFileInfo {
 /// Parses the git log to extract metadata for all commits.
 pub fn get_commit_info(repo: &Repo) -> HashMap<String, CommitInfo> {
     let output = Command::new("git")
-        .args(["log", "--pretty=format:\"%H-;-%aN-;-%aE-;-%at-;-%cN-;-%cE-;-%ct-;-%f\""])
+        .args(["log", "HEAD", "--pretty=format:\"%H-;-%aN-;-%aE-;-%at-;-%cN-;-%cE-;-%ct-;-%f\""])
         .current_dir(repo.path)
         .output()
         .expect("Failed to run git log");
@@ -102,7 +102,7 @@ pub fn populate_files_for_commits(repo: &Repo, commits: &mut HashMap<String, Com
         .expect("Failed to set git diff renameLimit");
 
     let output = Command::new("git")
-        .args(["log", "--name-status", "--pretty=format:commit %H", "--find-renames"])
+        .args(["log", "HEAD", "--name-status", "--pretty=format:commit %H", "--find-renames"])
         .current_dir(repo.path)
         .output()
         .expect("Failed to run git log with name-status");
