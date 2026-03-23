@@ -1,18 +1,10 @@
 use std::collections::HashMap;
-use crate::{git::AuthorInfo, doa::DoaFile};
+use crate::{git::AuthorInfo, tf::AuthorFiles};
 
 /// Calculates the Gini coefficient to measure the inequality of authorship 
 /// distribution among contributors.
-pub fn calculate_gini(files: &[DoaFile]) -> f64 {
-    let mut authors_map: HashMap<AuthorInfo, Vec<DoaFile>> = HashMap::new();
-
-    for file in files {
-        for author in file.get_authors() {
-            authors_map.entry(author).or_default().push(file.clone());
-        }
-    }
-
-    let mut x: Vec<f64> = authors_map.values().map(|files| files.len() as f64).collect();
+pub fn calculate_gini(authors: &mut HashMap<AuthorInfo, AuthorFiles>) -> f64 {
+    let mut x: Vec<f64> = authors.values().map(|files| files.files.len() as f64).collect();
     
     // Sort ascending
     x.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));

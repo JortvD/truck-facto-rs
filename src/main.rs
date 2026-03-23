@@ -64,11 +64,10 @@ fn main() {
     let doa_files = doa::prepare_for_doa(&file_names, &commits);
     println!("Prepared {} files for DOA calculation in {:?}", doa_files.len(), start_time.elapsed());
 
-    // 7. Calculate Truck Factor
-    let (tf, authors) = tf::calculate_truck_factor(&doa_files);
-
-    // 8. Calculate Gini Coefficient
-    let gini = gini::calculate_gini(&doa_files);
+    // 7. Calculate Truck Factor and Gini coefficient
+    let mut authors = tf::get_authors_map(&doa_files);
+    let gini = gini::calculate_gini(&mut authors.clone());
+    let tf = tf::calculate_truck_factor(&mut authors);
 
     println!("TF: {}, Gini: {:.4} in {:?}", tf, gini, total_start_time.elapsed());
     for (author, files) in authors {
@@ -76,5 +75,17 @@ fn main() {
             if files.included { " " } else { "x" }, 
             author.name, author.email, files.files.len()
         );
+    }
+
+    // 8. Calculate decayed Truck Factor and Gini coefficient if decay feature is enabled
+    #[cfg(feature = "decay")]
+    {
+        let decay_days = 10.0; // Example decay period of 220 days
+        let current_time = chrono::Utc::now();
+        let mut decay_authors = tf::get_decay_authors_map(&doa_files, decay_days, current_time);
+        let decay_gini = gini::calculate_gini(&mut decay_authors.clone());
+        let decay_tf = tf::calculate_truck_factor(&mut decay_authors);
+
+        println!("Decayed TF: {}, Decayed Gini: {:.4}", decay_tf, decay_gini);
     }
 }
